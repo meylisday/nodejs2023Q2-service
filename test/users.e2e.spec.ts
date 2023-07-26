@@ -64,7 +64,6 @@ describe('Users (e2e)', () => {
         .set(commonHeaders);
 
       expect(searchResponse.statusCode).toBe(StatusCodes.OK);
-
       expect(searchResponse.body).toBeInstanceOf(Object);
 
       const cleanupResponse = await unauthorizedRequest
