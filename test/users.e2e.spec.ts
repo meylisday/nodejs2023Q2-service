@@ -59,11 +59,15 @@ describe('Users (e2e)', () => {
 
       expect(creationResponse.statusCode).toBe(StatusCodes.CREATED);
 
+      // console.log(creationResponse.statusCode, StatusCodes.CREATED);
+
       const searchResponse = await unauthorizedRequest
         .get(usersRoutes.getById(id))
         .set(commonHeaders);
 
       expect(searchResponse.statusCode).toBe(StatusCodes.OK);
+
+      // console.log(searchResponse.statusCode, StatusCodes.OK);
       expect(searchResponse.body).toBeInstanceOf(Object);
 
       const cleanupResponse = await unauthorizedRequest
@@ -228,6 +232,8 @@ describe('Users (e2e)', () => {
           oldPassword: 'test',
           newPassword: 'fake',
         });
+
+      console.log(response.status, StatusCodes.NOT_FOUND);
 
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
