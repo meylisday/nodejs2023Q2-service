@@ -238,8 +238,6 @@ describe('Album (e2e)', () => {
           artistId: createAlbumDto.artistId,
         });
 
-        console.log(response);
-
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
