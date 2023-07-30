@@ -9,5 +9,6 @@ import { TrackModule } from 'src/track/track.module';
   imports: [AlbumModule, TrackModule],
   providers: [ArtistService, AppService],
   controllers: [ArtistController],
+  exports: [ArtistService],
 })
 export class ArtistModule {}
