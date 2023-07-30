@@ -3,7 +3,8 @@ import { ArtistEntity } from './artist.entity';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuid } from 'uuid';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { AlbumService } from 'src/album/album.service';
+import { AlbumService } from '../album/album.service';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class ArtistService {
@@ -11,6 +12,9 @@ export class ArtistService {
 
   @Inject(AlbumService)
   private readonly albumService: AlbumService;
+
+  @Inject(TrackService)
+  private readonly trackService: TrackService;
 
   createArtist(createArtistDto: CreateArtistDto): ArtistEntity {
     const id = uuid();
@@ -49,6 +53,7 @@ export class ArtistService {
     }
 
     this.albumService.deleteArtistFromAlbums(id);
+    this.trackService.deleteArtistFromTrack(id);
 
     this.artists.splice(objWithIdIndex, 1);
   }

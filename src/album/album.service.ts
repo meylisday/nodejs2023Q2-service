@@ -1,12 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AlbumEntity } from './album.entity';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { v4 as uuid } from 'uuid';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class AlbumService {
   private albums: AlbumEntity[] = [];
+
+  @Inject(TrackService)
+  private readonly trackService: TrackService;
 
   createAlbum(createAlbumDto: CreateAlbumDto): AlbumEntity {
     const id = uuid();
@@ -58,6 +62,8 @@ export class AlbumService {
     if (objWithIdIndex < 0) {
       throw new NotFoundException('Artist not found');
     }
+
+    this.trackService.deleteAlbumFromTrack(id);
     this.albums.splice(objWithIdIndex, 1);
   }
 }
