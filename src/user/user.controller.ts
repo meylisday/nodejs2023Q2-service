@@ -17,7 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { StatusCodes } from 'http-status-codes';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 
 @Controller('user')
 export class UserController {

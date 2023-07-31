@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { TrackService } from '../track/track.service';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 import { StatusCodes } from 'http-status-codes';
-import { TrackEntity } from 'src/track/track.entity';
-import { AlbumEntity } from 'src/album/album.entity';
-import { ArtistEntity } from 'src/artist/artist.entity';
-import { AlbumService } from 'src/album/album.service';
-import { ArtistService } from 'src/artist/artist.service';
+import { TrackEntity } from '../track/track.entity';
+import { AlbumEntity } from '../album/album.entity';
+import { ArtistEntity } from '../artist/artist.entity';
+import { AlbumService } from '../album/album.service';
+import { ArtistService } from '../artist/artist.service';
 
 @Controller('favs')
 export class FavoritesController {

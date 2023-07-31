@@ -37,7 +37,7 @@ export class AlbumController {
     }
     const album = this.albumService.findAlbumById(id);
     if (!album) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Album not found');
     }
     return album;
   }

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { AlbumController } from './album.controller';
 import { AppService } from '../app.service';
-import { TrackModule } from 'src/track/track.module';
+import { TrackModule } from '../track/track.module';
 
 @Module({
   imports: [TrackModule],
