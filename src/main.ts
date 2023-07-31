@@ -13,6 +13,6 @@ async function bootstrap() {
   const PORT = configService.get<string>('PORT');
   const swaggerDocument = yaml.load(fs.readFileSync('./doc/api.yaml', 'utf8'));
   SwaggerModule.setup('doc', app, swaggerDocument as OpenAPIObject);
-  await app.listen(PORT);
+  await app.listen(PORT || 4000);
 }
 bootstrap();
