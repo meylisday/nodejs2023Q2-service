@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { ArtistEntity } from './artist.entity';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 import { StatusCodes } from 'http-status-codes';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
