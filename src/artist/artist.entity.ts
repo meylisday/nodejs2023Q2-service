@@ -1,11 +1,12 @@
-export class ArtistEntity {
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+@Entity()
+export class Artist {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-  name: string;
-  grammy: boolean;
 
-  constructor(id: string, name: string, grammy: boolean) {
-    this.id = id;
-    this.name = name;
-    this.grammy = grammy;
-  }
+  @Column()
+  name: string;
+
+  @Column()
+  grammy: boolean;
 }

@@ -17,7 +17,7 @@ export class FavoritesService {
   @Inject(ArtistService)
   private readonly artistService: ArtistService;
 
-  findAllFavorites() {
+  async findAllFavorites() {
     const tracks = this.trackService
       .findAllTracks()
       .filter((track) => this.favorites.tracks.includes(track.id));
@@ -26,9 +26,9 @@ export class FavoritesService {
       .findAllAlbums()
       .filter((album) => this.favorites.albums.includes(album.id));
 
-    const artists = this.artistService
-      .findAllArtists()
-      .filter((artist) => this.favorites.artists.includes(artist.id));
+    const artists = (await this.artistService.getArtists()).filter((artist) =>
+      this.favorites.artists.includes(artist.id),
+    );
 
     return {
       tracks: tracks,
