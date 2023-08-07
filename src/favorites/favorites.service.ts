@@ -22,9 +22,9 @@ export class FavoritesService {
       .findAllTracks()
       .filter((track) => this.favorites.tracks.includes(track.id));
 
-    const albums = this.albumService
-      .findAllAlbums()
-      .filter((album) => this.favorites.albums.includes(album.id));
+    const albums = (await this.albumService.getAlbums()).filter((album) =>
+      this.favorites.albums.includes(album.id),
+    );
 
     const artists = (await this.artistService.getArtists()).filter((artist) =>
       this.favorites.artists.includes(artist.id),

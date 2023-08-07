@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Artist } from './artist.entity';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-// import { AlbumService } from '../album/album.service';
 // import { TrackService } from '../track/track.service';
 import { ArtistRepository } from './artist.repository';
+import { AlbumService } from 'src/album/album.service';
 
 @Injectable()
 export class ArtistService {
   constructor(private readonly artistRepository: ArtistRepository) {}
 
-  // @Inject(AlbumService)
-  // private readonly albumService: AlbumService;
+  @Inject(AlbumService)
+  private readonly albumService: AlbumService;
 
   // @Inject(TrackService)
   // private readonly trackService: TrackService;
@@ -29,8 +29,10 @@ export class ArtistService {
   }
 
   async deleteArtist(id: string): Promise<void> {
-    // this.albumService.deleteArtistFromAlbums(id);
+    await this.albumService.deleteArtistFromAlbums(id);
     // this.trackService.deleteArtistFromTrack(id);
+    console.log('3 =================>');
+
     await this.artistRepository.delete(id);
   }
 
