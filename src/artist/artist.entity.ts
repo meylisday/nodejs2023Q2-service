@@ -1,11 +1,17 @@
-export class ArtistEntity {
+import { Album } from 'src/album/album.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Artist {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
   name: string;
+
+  @Column()
   grammy: boolean;
 
-  constructor(id: string, name: string, grammy: boolean) {
-    this.id = id;
-    this.name = name;
-    this.grammy = grammy;
-  }
+  @OneToMany(() => Album, (album) => album.artist, { eager: true })
+  albums: Album[];
 }

@@ -14,11 +14,9 @@ import { FavoritesService } from './favorites.service';
 import { TrackService } from '../track/track.service';
 import { AppService } from '../app.service';
 import { StatusCodes } from 'http-status-codes';
-import { TrackEntity } from '../track/track.entity';
-import { AlbumEntity } from '../album/album.entity';
-import { ArtistEntity } from '../artist/artist.entity';
-import { AlbumService } from '../album/album.service';
-import { ArtistService } from '../artist/artist.service';
+import { TrackEntity } from 'src/track/track.entity';
+import { AlbumService } from 'src/album/album.service';
+import { ArtistService } from 'src/artist/artist.service';
 
 @Controller('favs')
 export class FavoritesController {
@@ -72,11 +70,11 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  addAlbumToFavorites(@Param('id') id: string): AlbumEntity {
+  async addAlbumToFavorites(@Param('id') id: string) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const album = this.albumService.findAlbumById(id);
+    const album = await this.albumService.getAlbumById(id);
     if (!album) {
       throw new HttpException(
         'Unprocessable entity',
@@ -102,11 +100,11 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  addArtistToFavorites(@Param('id') id: string): ArtistEntity {
+  addArtistToFavorites(@Param('id') id: string) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const artist = this.artistService.findArtistById(id);
+    const artist = this.artistService.getArtistById(id);
     if (!artist) {
       throw new HttpException(
         'Unprocessable entity',

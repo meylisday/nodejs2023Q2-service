@@ -1,24 +1,36 @@
-export class UserEntity {
-  id: string;
-  login: string;
-  password: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
+import { Exclude, Transform } from 'class-transformer';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-  constructor(
-    id: string,
-    login: string,
-    password: string,
-    version: number,
-    createdAt: number,
-    updatedAt: number,
-  ) {
-    this.id = id;
-    this.login = login;
-    this.password = password;
-    this.version = version;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  login: string;
+
+  @Column()
+  @Exclude()
+  password: string;
+
+  @Column({ default: 1 })
+  version: number;
+
+  @CreateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
+  updatedAt: Date;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
   }
 }

@@ -12,8 +12,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
-import { ArtistEntity } from './artist.entity';
-import { AppService } from '../app.service';
+import { AppService } from 'src/app.service';
 import { StatusCodes } from 'http-status-codes';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -26,36 +25,36 @@ export class ArtistController {
   ) {}
 
   @Get()
-  findAllArtists(): ArtistEntity[] {
-    return this.artistService.findAllArtists();
+  findAllArtists() {
+    return this.artistService.getArtists();
   }
 
   @Get(':id')
-  findArtistById(@Param('id') id: string): ArtistEntity {
+  async findArtistById(@Param('id') id: string) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const user = this.artistService.findArtistById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
+    const artist = await this.artistService.getArtistById(id);
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
     }
-    return user;
+    return artist;
   }
 
   @Post()
-  createArtist(@Body() createArtistDto: CreateArtistDto): ArtistEntity {
+  createArtist(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.createArtist(createArtistDto);
   }
 
   @Put(':id')
-  updateArtist(
+  async updateArtist(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): ArtistEntity {
+  ) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
     }
-    const artist = this.findArtistById(id);
+    const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
@@ -65,9 +64,14 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id') id: string): void {
+  async deleteArtist(@Param('id') id: string): Promise<void> {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
+    }
+
+    const artist = await this.artistService.getArtistById(id);
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
     }
     return this.artistService.deleteArtist(id);
   }

@@ -14,7 +14,6 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { AppService } from '../app.service';
 import { AlbumService } from './album.service';
-import { AlbumEntity } from './album.entity';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
@@ -26,16 +25,16 @@ export class AlbumController {
   ) {}
 
   @Get()
-  findAllAlbums(): AlbumEntity[] {
-    return this.albumService.findAllAlbums();
+  findAllAlbums() {
+    return this.albumService.getAlbums();
   }
 
   @Get(':id')
-  findAlbumById(@Param('id') id: string): AlbumEntity {
+  async findAlbumById(@Param('id') id: string) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const album = this.albumService.findAlbumById(id);
+    const album = await this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -43,19 +42,19 @@ export class AlbumController {
   }
 
   @Post()
-  createAlbum(@Body() createAlbumDto: CreateAlbumDto): AlbumEntity {
+  createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.createAlbum(createAlbumDto);
   }
 
   @Put(':id')
-  updateAlbum(
+  async updateAlbum(
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): AlbumEntity {
+  ) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
-    const album = this.findAlbumById(id);
+    const album = await this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -65,10 +64,14 @@ export class AlbumController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id') id: string): void {
+  async deleteAlbum(@Param('id') id: string): Promise<void> {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    return this.albumService.deleteAlbum(id);
+    const album = await this.albumService.getAlbumById(id);
+    if (!album) {
+      throw new NotFoundException('Album not found');
+    }
+    return await this.albumService.deleteAlbum(id);
   }
 }
