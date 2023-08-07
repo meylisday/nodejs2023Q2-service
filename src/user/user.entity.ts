@@ -1,3 +1,4 @@
+import { Exclude, Transform } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -15,24 +16,21 @@ export class User {
   login: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({ default: 1 })
   version: number;
 
   @CreateDateColumn()
-  createdAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  updatedAt: Date;
 
-  // @BeforeUpdate()
-  // public setUpdatedAt() {
-  //   this.updatedAt = Math.floor(Date.now() / 1000);
-  // }
-
-  // @BeforeInsert()
-  // public setCreatedAt() {
-  //   this.createdAt = Math.floor(Date.now() / 1000);
-  // }
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

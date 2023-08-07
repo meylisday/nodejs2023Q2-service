@@ -8,7 +8,7 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-export type UserResponse = Promise<Omit<User, 'password'>>;
+// export type UserResponse = Promise<Omit<User, 'password'>>;
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -16,7 +16,7 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
-  public async createUser(createUserDto: CreateUserDto): UserResponse {
+  public async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { login, password } = createUserDto;
 
     const user = this.create({
@@ -25,14 +25,7 @@ export class UserRepository extends Repository<User> {
     });
 
     try {
-      await this.save(user);
-      return {
-        id: user.id,
-        version: user.version,
-        login: user.login,
-        createdAt: new Date(user.createdAt).getTime(),
-        updatedAt: new Date(user.updatedAt).getTime(),
-      };
+      return await this.save(user);
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('Username already exists');
@@ -42,25 +35,15 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto): UserResponse {
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const { newPassword } = updateUserDto;
-
-    const user = await this.findOneBy({ id });
-    const version = user.version + 1;
 
     await this.update(id, {
       password: newPassword,
-      version: version,
     });
 
-    const updatedUser = await this.findOneBy({ id });
+    await this.increment({ id }, 'version', 1);
 
-    return {
-      id: updatedUser.id,
-      version: updatedUser.version,
-      login: updatedUser.login,
-      createdAt: new Date(updatedUser.createdAt).getTime(),
-      updatedAt: new Date(updatedUser.updatedAt).getTime(),
-    };
+    return await this.findOneBy({ id });
   }
 }

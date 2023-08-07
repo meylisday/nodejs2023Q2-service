@@ -11,6 +11,8 @@ import {
   NotFoundException,
   HttpCode,
   ForbiddenException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -42,11 +44,13 @@ export class UserController {
     return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
