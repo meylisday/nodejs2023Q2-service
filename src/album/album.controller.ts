@@ -12,7 +12,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';

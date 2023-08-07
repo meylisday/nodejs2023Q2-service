@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { TrackService } from '../track/track.service';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 import { StatusCodes } from 'http-status-codes';
 import { TrackEntity } from 'src/track/track.entity';
 import { AlbumService } from 'src/album/album.service';

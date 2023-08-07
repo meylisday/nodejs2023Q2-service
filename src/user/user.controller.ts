@@ -18,7 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { StatusCodes } from 'http-status-codes';
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
 
 @Controller('user')
 export class UserController {
