@@ -2,11 +2,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY package.json .
+COPY package-lock.json .
+RUN npm i --silent
 
 COPY . .
 
 EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+CMD npm start:dev

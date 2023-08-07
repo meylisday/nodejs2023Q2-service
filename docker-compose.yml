@@ -15,6 +15,7 @@ services:
       - mynetwork
 
   app:
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.app
@@ -23,6 +24,10 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "${PORT}:${PORT}"
+    command: npm run start:dev
+    volumes:
+      - /app/node_modues
+      - ./src:/app/src
     depends_on:
       - postgres
     networks:
