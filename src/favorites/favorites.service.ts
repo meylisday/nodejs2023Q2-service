@@ -18,9 +18,9 @@ export class FavoritesService {
   private readonly artistService: ArtistService;
 
   async findAllFavorites() {
-    const tracks = this.trackService
-      .findAllTracks()
-      .filter((track) => this.favorites.tracks.includes(track.id));
+    const tracks = (await this.trackService.getTracks()).filter((track) =>
+      this.favorites.tracks.includes(track.id),
+    );
 
     const albums = (await this.albumService.getAlbums()).filter((album) =>
       this.favorites.albums.includes(album.id),

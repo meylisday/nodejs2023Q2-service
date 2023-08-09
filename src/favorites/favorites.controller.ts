@@ -14,7 +14,6 @@ import { FavoritesService } from './favorites.service';
 import { TrackService } from '../track/track.service';
 import { AppService } from '../app.service';
 import { StatusCodes } from 'http-status-codes';
-import { TrackEntity } from 'src/track/track.entity';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
 
@@ -40,11 +39,11 @@ export class FavoritesController {
   }
 
   @Post('track/:id')
-  addTrackToFavorites(@Param('id') id: string): TrackEntity {
+  async addTrackToFavorites(@Param('id') id: string) {
     if (!this.appService.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const track = this.trackService.findTrackById(id);
+    const track = await this.trackService.getTrackById(id);
     if (!track) {
       throw new HttpException(
         'Unprocessable entity',

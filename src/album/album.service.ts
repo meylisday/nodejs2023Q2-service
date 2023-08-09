@@ -1,24 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { TrackService } from '../track/track.service';
 import { AlbumRepository } from './album.repository';
 import { Album } from './album.entity';
-import { ArtistRepository } from 'src/artist/artist.repository';
 import { Equal } from 'typeorm';
+import { ArtistRepository } from 'src/artist/artist.repository';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
   constructor(
     private readonly albumRepository: AlbumRepository,
-    private readonly artistRepository: ArtistRepository,
+    @Inject(forwardRef(() => ArtistRepository))
+    private artistRepository: ArtistRepository,
+    @Inject(forwardRef(() => TrackService))
+    private trackService: TrackService,
   ) {}
-
-  @Inject(TrackService)
-  private readonly trackService: TrackService;
-
-  // @Inject(ArtistService)
-  // private readonly artistService: ArtistService;
 
   async createAlbum(createAlbumDto: CreateAlbumDto) {
     const artist = await this.artistRepository.findOneBy({
@@ -40,11 +37,14 @@ export class AlbumService {
   }
 
   async deleteAlbum(id: string): Promise<void> {
-    // this.trackService.deleteAlbumFromTrack(id);
+    await this.trackService.deleteAlbumFromTracks(id);
     await this.albumRepository.delete(id);
   }
 
-  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
-    return this.albumRepository.updateAlbum(id, updateAlbumDto);
+  async updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const artist = await this.artistRepository.findOneBy({
+      id: Equal(updateAlbumDto.artistId),
+    });
+    return this.albumRepository.updateAlbum(id, updateAlbumDto, artist);
   }
 }

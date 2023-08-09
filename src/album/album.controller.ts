@@ -12,17 +12,13 @@ import {
   Param,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { AppService } from '../app.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Controller('album')
 export class AlbumController {
-  constructor(
-    private readonly albumService: AlbumService,
-    private readonly appService: AppService,
-  ) {}
+  constructor(private readonly albumService: AlbumService) {}
 
   @Get()
   findAllAlbums() {
@@ -31,7 +27,7 @@ export class AlbumController {
 
   @Get(':id')
   async findAlbumById(@Param('id') id: string) {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
     const album = await this.albumService.getAlbumById(id);
@@ -51,7 +47,7 @@ export class AlbumController {
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
     const album = await this.albumService.getAlbumById(id);
@@ -65,7 +61,7 @@ export class AlbumController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAlbum(@Param('id') id: string): Promise<void> {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
     const album = await this.albumService.getAlbumById(id);
@@ -73,5 +69,11 @@ export class AlbumController {
       throw new NotFoundException('Album not found');
     }
     return await this.albumService.deleteAlbum(id);
+  }
+
+  private isValidUuid(id: string): boolean {
+    const uuidRegex =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    return uuidRegex.test(id);
   }
 }

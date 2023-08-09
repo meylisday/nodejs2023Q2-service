@@ -12,17 +12,13 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
-import { AppService } from 'src/app.service';
 import { StatusCodes } from 'http-status-codes';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(
-    private readonly artistService: ArtistService,
-    private readonly appService: AppService,
-  ) {}
+  constructor(private readonly artistService: ArtistService) {}
 
   @Get()
   findAllArtists() {
@@ -31,7 +27,7 @@ export class ArtistController {
 
   @Get(':id')
   async findArtistById(@Param('id') id: string) {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
     const artist = await this.artistService.getArtistById(id);
@@ -51,7 +47,7 @@ export class ArtistController {
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
     }
     const artist = await this.artistService.getArtistById(id);
@@ -65,7 +61,7 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteArtist(@Param('id') id: string): Promise<void> {
-    if (!this.appService.isValidUuid(id)) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
 
@@ -74,5 +70,11 @@ export class ArtistController {
       throw new NotFoundException('Artist not found');
     }
     return this.artistService.deleteArtist(id);
+  }
+
+  private isValidUuid(id: string): boolean {
+    const uuidRegex =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    return uuidRegex.test(id);
   }
 }
