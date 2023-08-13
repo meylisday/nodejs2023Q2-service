@@ -3,8 +3,8 @@ import { Track } from './track.entity';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackRepository } from './track.repository';
-import { AlbumRepository } from 'src/album/album.repository';
-import { ArtistRepository } from 'src/artist/artist.repository';
+import { AlbumRepository } from '../album/album.repository';
+import { ArtistRepository } from '../artist/artist.repository';
 import { Equal } from 'typeorm';
 import { ModuleRef } from '@nestjs/core';
 

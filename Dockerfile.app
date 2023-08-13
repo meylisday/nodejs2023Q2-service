@@ -4,10 +4,11 @@ WORKDIR /app
 
 COPY package.json .
 COPY package-lock.json .
-RUN npm i --silent
+RUN npm i --silent --force
 
 COPY . .
 
 EXPOSE ${PORT}
 
+RUN npm run build
 CMD npm start:dev

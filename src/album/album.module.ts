@@ -4,8 +4,8 @@ import { AlbumController } from './album.controller';
 import { AlbumRepository } from './album.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Album } from './album.entity';
-import { TrackModule } from 'src/track/track.module';
-import { ArtistModule } from 'src/artist/artist.module';
+import { TrackModule } from '../track/track.module';
+import { ArtistModule } from '../artist/artist.module';
 
 @Module({
   imports: [

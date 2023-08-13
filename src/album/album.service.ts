@@ -4,8 +4,8 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumRepository } from './album.repository';
 import { Album } from './album.entity';
 import { Equal } from 'typeorm';
-import { ArtistRepository } from 'src/artist/artist.repository';
-import { TrackService } from 'src/track/track.service';
+import { ArtistRepository } from '../artist/artist.repository';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class AlbumService {

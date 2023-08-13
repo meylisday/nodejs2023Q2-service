@@ -1,79 +1,117 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { FavoritesEntity } from './favorites.entity';
+import { Favorites } from './favorites.entity';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
 import { ArtistService } from '../artist/artist.service';
+import { FavoritesRepository } from './favorites.repository';
 
 @Injectable()
 export class FavoritesService {
-  private favorites: FavoritesEntity = { artists: [], albums: [], tracks: [] };
-
-  @Inject(TrackService)
-  private readonly trackService: TrackService;
-
-  @Inject(AlbumService)
-  private readonly albumService: AlbumService;
-
-  @Inject(ArtistService)
-  private readonly artistService: ArtistService;
+  constructor(
+    private readonly favoritesRepository: FavoritesRepository,
+    @Inject(TrackService)
+    private readonly trackService: TrackService,
+    @Inject(AlbumService)
+    private readonly albumService: AlbumService,
+    @Inject(ArtistService)
+    private readonly artistService: ArtistService,
+  ) {}
 
   async findAllFavorites() {
-    const tracks = (await this.trackService.getTracks()).filter((track) =>
-      this.favorites.tracks.includes(track.id),
-    );
+    return this.filterFields(await this.favoritesRepository.getFavorites());
+  }
 
-    const albums = (await this.albumService.getAlbums()).filter((album) =>
-      this.favorites.albums.includes(album.id),
-    );
+  async addTrackToFavorites(id: string) {
+    const track = await this.trackService.getTrackById(id);
+    const favorites = await this.favoritesRepository.getFavorites();
 
-    const artists = (await this.artistService.getArtists()).filter((artist) =>
-      this.favorites.artists.includes(artist.id),
-    );
+    console.log(favorites);
 
+    if (!favorites.tracks) {
+      favorites.tracks = [];
+    }
+
+    favorites.tracks.push(track);
+
+    return this.filterFields(await this.favoritesRepository.save(favorites));
+  }
+
+  async deleteTrackFromFavorites(id: string) {
+    const favorites = await this.favoritesRepository.getFavorites();
+    const objWithIdIndex = favorites.tracks.findIndex((obj) => obj.id === id);
+    favorites.tracks.splice(objWithIdIndex, 1);
+
+    await this.favoritesRepository.save(favorites);
+  }
+
+  async addAlbumToFavorites(id: string) {
+    const album = await this.albumService.getAlbumById(id);
+    const favorites = await this.favoritesRepository.getFavorites();
+
+    if (!favorites.albums) {
+      favorites.albums = [];
+    }
+
+    favorites.albums.push(album);
+
+    return this.filterFields(await this.favoritesRepository.save(favorites));
+  }
+
+  async deleteAlbumFromFavorites(id: string) {
+    const favorites = await this.favoritesRepository.getFavorites();
+    const objWithIdIndex = favorites.albums.findIndex((obj) => obj.id === id);
+    favorites.albums.splice(objWithIdIndex, 1);
+
+    await this.favoritesRepository.save(favorites);
+  }
+
+  async addArtistToFavorites(id: string) {
+    const artist = await this.artistService.getArtistById(id);
+    const favorites = await this.favoritesRepository.getFavorites();
+
+    if (!favorites.artists) {
+      favorites.artists = [];
+    }
+
+    favorites.artists.push(artist);
+
+    return this.filterFields(await this.favoritesRepository.save(favorites));
+  }
+
+  async deleteArtistFromFavorites(id: string) {
+    const favorites = await this.favoritesRepository.getFavorites();
+    const objWithIdIndex = favorites.artists.findIndex((obj) => obj.id === id);
+
+    // TODO: TEST ME
+    // if (objWithIdIndex < 0) {
+    //   throw new NotFoundException('Artist not in the favorites');
+    // }
+
+    favorites.artists.splice(objWithIdIndex, 1);
+
+    await this.favoritesRepository.save(favorites);
+  }
+
+  private filterFields(favorites: Favorites) {
     return {
-      tracks: tracks,
-      albums: albums,
-      artists: artists,
+      albums: favorites.albums.map((album) => ({
+        id: album.id,
+        name: album.name,
+        year: album.year,
+        artistId: album.artistId,
+      })),
+      artists: favorites.artists.map((artist) => ({
+        id: artist.id,
+        name: artist.name,
+        grammy: artist.grammy,
+      })),
+      tracks: favorites.tracks.map((track) => ({
+        id: track.id,
+        name: track.name,
+        duration: track.duration,
+        artistId: track.artistId,
+        albumId: track.albumId,
+      })),
     };
-  }
-  addTrackToFavorites(id: string): void {
-    this.favorites.tracks.push(id);
-  }
-
-  deleteTrackFromFavorites(id: string): void {
-    const objWithIdIndex = this.favorites.tracks.findIndex((obj) => obj === id);
-    this.favorites.tracks.splice(objWithIdIndex, 1);
-  }
-
-  addAlbumToFavorites(id: string): void {
-    this.favorites.albums.push(id);
-  }
-
-  deleteAlbumFromFavorites(id: string): void {
-    const objWithIdIndex = this.favorites.albums.findIndex((obj) => obj === id);
-    this.favorites.albums.splice(objWithIdIndex, 1);
-  }
-
-  addArtistToFavorites(id: string): void {
-    this.favorites.artists.push(id);
-  }
-
-  deleteArtistFromFavorites(id: string): void {
-    const objWithIdIndex = this.favorites.artists.findIndex(
-      (obj) => obj === id,
-    );
-    this.favorites.artists.splice(objWithIdIndex, 1);
-  }
-
-  trackIsInFavorites(id: string): boolean {
-    return this.favorites.tracks.includes(id);
-  }
-
-  albumIsInFavorites(id: string): boolean {
-    return this.favorites.albums.includes(id);
-  }
-
-  artistIsInFavorites(id: string): boolean {
-    return this.favorites.artists.includes(id);
   }
 }

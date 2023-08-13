@@ -5,7 +5,7 @@ import { Artist } from './artist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArtistRepository } from './artist.repository';
 import { AlbumModule } from '../album/album.module';
-import { TrackModule } from 'src/track/track.module';
+import { TrackModule } from '../track/track.module';
 
 @Module({
   imports: [
