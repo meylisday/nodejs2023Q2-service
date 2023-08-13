@@ -6,7 +6,6 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  // NotFoundException,
   Param,
   Post,
 } from '@nestjs/common';
@@ -55,9 +54,7 @@ export class FavoritesController {
     if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    // if (!this.favoritesService.trackIsInFavorites(id)) {
-    //   throw new NotFoundException('Track not in the favorites');
-    // }
+
     await this.favoritesService.deleteTrackFromFavorites(id);
   }
 
@@ -85,9 +82,6 @@ export class FavoritesController {
     if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    // if (!this.favoritesService.albumIsInFavorites(id)) {
-    //   throw new NotFoundException('Album not in the favorites');
-    // }
     await this.favoritesService.deleteAlbumFromFavorites(id);
   }
 
@@ -113,9 +107,6 @@ export class FavoritesController {
     if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    // if (!this.favoritesService.artistIsInFavorites(id)) {
-    //   throw new NotFoundException('Artist not in the favorites');
-    // }
     await this.favoritesService.deleteArtistFromFavorites(id);
   }
 

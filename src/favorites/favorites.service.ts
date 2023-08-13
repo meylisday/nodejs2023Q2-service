@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Favorites } from './favorites.entity';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
@@ -25,8 +25,6 @@ export class FavoritesService {
     const track = await this.trackService.getTrackById(id);
     const favorites = await this.favoritesRepository.getFavorites();
 
-    console.log(favorites);
-
     if (!favorites.tracks) {
       favorites.tracks = [];
     }
@@ -39,6 +37,11 @@ export class FavoritesService {
   async deleteTrackFromFavorites(id: string) {
     const favorites = await this.favoritesRepository.getFavorites();
     const objWithIdIndex = favorites.tracks.findIndex((obj) => obj.id === id);
+
+    if (objWithIdIndex < 0) {
+      throw new NotFoundException('Track not in the favorites');
+    }
+
     favorites.tracks.splice(objWithIdIndex, 1);
 
     await this.favoritesRepository.save(favorites);
@@ -60,6 +63,11 @@ export class FavoritesService {
   async deleteAlbumFromFavorites(id: string) {
     const favorites = await this.favoritesRepository.getFavorites();
     const objWithIdIndex = favorites.albums.findIndex((obj) => obj.id === id);
+
+    if (objWithIdIndex < 0) {
+      throw new NotFoundException('Album not in the favorites');
+    }
+
     favorites.albums.splice(objWithIdIndex, 1);
 
     await this.favoritesRepository.save(favorites);
@@ -82,10 +90,9 @@ export class FavoritesService {
     const favorites = await this.favoritesRepository.getFavorites();
     const objWithIdIndex = favorites.artists.findIndex((obj) => obj.id === id);
 
-    // TODO: TEST ME
-    // if (objWithIdIndex < 0) {
-    //   throw new NotFoundException('Artist not in the favorites');
-    // }
+    if (objWithIdIndex < 0) {
+      throw new NotFoundException('Artist not in the favorites');
+    }
 
     favorites.artists.splice(objWithIdIndex, 1);
 

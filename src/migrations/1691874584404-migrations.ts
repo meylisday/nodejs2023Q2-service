@@ -1,3 +1,4 @@
+import { FAVORITE_ID } from '../favorites/favorites.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Migrations1691874584404 implements MigrationInterface {
@@ -75,7 +76,7 @@ export class Migrations1691874584404 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `INSERT INTO favorites (id) VALUES ('f22a1d80-1072-4733-8093-64cdd09e328f')`,
+      `INSERT INTO favorites (id) VALUES ('${FAVORITE_ID}')`,
       undefined,
     );
   }
