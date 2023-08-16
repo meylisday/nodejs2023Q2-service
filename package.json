@@ -43,7 +43,6 @@
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
-    "typeorm-seeding": "^1.6.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

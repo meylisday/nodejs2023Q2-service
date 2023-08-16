@@ -5,7 +5,9 @@
 git clone {repository URL}
 ```
 
+```
 copy .env.example and rename to .env and set up your variables
+```
 
 ## Installing NPM modules
 
