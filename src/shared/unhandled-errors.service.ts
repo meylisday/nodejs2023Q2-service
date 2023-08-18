@@ -1,18 +1,22 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { LoggingService } from './logging.service';
 
 @Injectable()
-export class UnhandledErrorsService implements OnModuleInit {
+export class UnhandledErrorsService implements OnApplicationBootstrap {
   constructor(private readonly loggingService: LoggingService) {}
 
-  onModuleInit() {
+  onApplicationBootstrap() {
     process.on('uncaughtException', (error) => {
-      this.loggingService.logError(error);
-      process.exit(1);
+      this.loggingService.error(error.toString());
+      process.exitCode = 1;
     });
 
     process.on('unhandledRejection', (reason) => {
-      this.loggingService.logError(reason as Error);
+      if (reason instanceof Error) {
+        this.loggingService.error(reason.toString());
+      } else {
+        this.loggingService.error(String(reason));
+      }
     });
   }
 }

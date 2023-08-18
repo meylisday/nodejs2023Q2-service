@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -9,6 +9,10 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getTypeOrmModuleOptions } from './typeorm.config';
+import { LoggingService } from './shared/logging.service';
+import { UnhandledErrorsService } from './shared/unhandled-errors.service';
+import { HttpExceptionFilter } from './shared/http-exception.filter';
+import { LoggingMiddleware } from './shared/logging.middleware';
 
 @Module({
   imports: [
@@ -27,6 +31,15 @@ import { getTypeOrmModuleOptions } from './typeorm.config';
     FavoritesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    LoggingService,
+    UnhandledErrorsService,
+    HttpExceptionFilter,
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}
