@@ -13,6 +13,7 @@ import { LoggingService } from './shared/logging.service';
 import { UnhandledErrorsService } from './shared/unhandled-errors.service';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
 import { LoggingMiddleware } from './shared/logging.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { LoggingMiddleware } from './shared/logging.middleware';
     AlbumModule,
     TrackModule,
     FavoritesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
