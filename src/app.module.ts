@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -14,6 +14,8 @@ import { UnhandledErrorsService } from './shared/unhandled-errors.service';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
 import { LoggingMiddleware } from './shared/logging.middleware';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuardMiddleware } from './auth/JwtAuthGuardMiddleware';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { AuthModule } from './auth/auth.module';
   providers: [
     AppService,
     LoggingService,
+    JwtService,
     UnhandledErrorsService,
     HttpExceptionFilter,
   ],
@@ -43,5 +46,14 @@ import { AuthModule } from './auth/auth.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
+    consumer
+      .apply(JwtAuthGuardMiddleware)
+      .exclude(
+        { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'auth/signup', method: RequestMethod.POST },
+        { path: '/doc', method: RequestMethod.GET },
+        { path: '/', method: RequestMethod.GET },
+      )
+      .forRoutes('*');
   }
 }

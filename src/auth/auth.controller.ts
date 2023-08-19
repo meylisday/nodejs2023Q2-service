@@ -1,34 +1,20 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Post,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
-import { UserService } from '../user/user.service';
 import { User } from '../user/user.entity';
-import { SignupDto } from './dto/signup.dto';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    @Inject(UserService)
-    private readonly userService: UserService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() loginDto: CreateUserDto) {
+    return this.authService.login(loginDto);
   }
 
   @Post('signup')
-  async signup(@Body() signupDto: SignupDto): Promise<User> {
+  async signup(@Body() signupDto: CreateUserDto): Promise<User> {
     const { login, password } = signupDto;
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltOrRounds);
