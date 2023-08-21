@@ -1,14 +1,9 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.entity';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { RefreshTokenAuthDto } from './dto/refresh-token.dto';
 import { PayloadType } from './types/payload.type';
 
 @Injectable()
@@ -53,17 +48,12 @@ export class AuthService {
     return this.userService.createUser({ login, password });
   }
 
-  async refresh(refreshDto: RefreshTokenAuthDto) {
-    const { refreshToken } = refreshDto;
-    if (!refreshToken) {
-      throw new UnauthorizedException('Credentials are not valid');
-    }
-
+  async refresh(refreshToken: string) {
     const payload = await this.verifyRefreshToken(refreshToken);
     const user = await this.userService.getUserById(payload.id);
 
     if (!user) {
-      throw new ForbiddenException('Credentials are not valid');
+      throw new ForbiddenException('Invalid token');
     }
 
     return {

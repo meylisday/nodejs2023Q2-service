@@ -47,6 +47,6 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token is missing');
     }
-    return await this.authService.refresh(refreshDto);
+    return await this.authService.refresh(refreshToken);
   }
 }
