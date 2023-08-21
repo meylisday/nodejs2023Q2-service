@@ -27,4 +27,8 @@ export class UserService {
   updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.usersRepository.updateUser(id, updateUserDto);
   }
+
+  async getUser(query: object): Promise<User> {
+    return this.usersRepository.findOneBy(query);
+  }
 }
