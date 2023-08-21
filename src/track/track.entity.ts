@@ -1,20 +1,27 @@
-export class TrackEntity {
+import { Album } from '../album/album.entity';
+import { Artist } from '../artist/artist.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+
+@Entity()
+export class Track {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
   name: string;
-  artistId: string | null;
-  albumId: string | null;
+
+  @Column({ nullable: true })
+  artistId: string;
+
+  @ManyToOne(() => Artist, (artist) => artist.tracks, { eager: false })
+  artist: Artist | null;
+
+  @Column({ nullable: true })
+  albumId: string;
+
+  @ManyToOne(() => Album, (album) => album.tracks, { eager: false })
+  album: Album | null;
+
+  @Column()
   duration: number;
-  constructor(
-    id: string,
-    name: string,
-    artistId: string | null,
-    albumId: string | null,
-    duration: number,
-  ) {
-    this.id = id;
-    this.name = name;
-    this.artistId = artistId;
-    this.albumId = albumId;
-    this.duration = duration;
-  }
 }

@@ -11,52 +11,51 @@ import {
   NotFoundException,
   HttpCode,
   ForbiddenException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { StatusCodes } from 'http-status-codes';
-import { AppService } from '../app.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly appService: AppService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAllUsers(): UserEntity[] {
-    return this.userService.findAllUsers();
+  findAllUsers() {
+    return this.userService.getUsers();
   }
 
   @Get(':id')
-  findUserById(@Param('id') id: string): UserEntity {
-    if (!this.appService.isValidUuid(id)) {
+  async findUserById(@Param('id') id: string) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    const user = this.userService.findUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto): Partial<UserEntity> {
+  createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Partial<UserEntity> {
-    if (!this.appService.isValidUuid(id)) {
+  ) {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
     }
-    const user = this.findUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -70,10 +69,20 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('id') id: string): void {
-    if (!this.appService.isValidUuid(id)) {
+  async deleteUser(@Param('id') id: string): Promise<void> {
+    if (!this.isValidUuid(id)) {
       throw new HttpException('Invalid id', StatusCodes.BAD_REQUEST);
     }
-    return this.userService.deleteUser(id);
+    const user = await this.userService.getUserById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    this.userService.deleteUser(id);
+  }
+
+  private isValidUuid(id: string): boolean {
+    const uuidRegex =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    return uuidRegex.test(id);
   }
 }
